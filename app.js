@@ -1,6 +1,7 @@
 'use strict';
 //Ray Johnson and I worked together on this code with a tutor.
 //use global variables:
+var ctx = document.getElementById("myChart").getContext('2d');
 var totalClicks = 0; //this var tracks how many times someone clicks the images
 var firstImg = document.getElementById('first');
 var secondImg = document.getElementById('second');
@@ -18,6 +19,11 @@ function Product(name, imgPath) {
   this.imgPath = imgPath;
   this.views = 0; //the other properties havent been seen. set them to 0
   this.votes = 0; //everytime you click on an object increase this value
+  var cOne = Math.floor(Math.random() * 255);
+  var cTwo = Math.floor(Math.random() * 255);
+  var cThree = Math.floor(Math.random() * 255);
+
+  this.bgColor = `rgba(${cOne}, ${cTwo}, ${cThree}, 0.2)`;
   allProducts.push(this); //push this whenever the object is instantiated (into the allProducts arrary)
 }
 //we need a "blueprint" for creating many objects of the same "type".
@@ -113,6 +119,47 @@ function displayResults() {
     listEl.textContent = allProducts[i].votes + ' votes for the ' + allProducts[i].name + ' and ' + allProducts[i].views + ' views ';
     results.appendChild(listEl);
   }
+}
+randomImage();
+//generate a string for every object
+function displayResults() {
+  var names = [];
+  for (var i = 0; i < allProducts.length; i++) {
+    names.push(allProducts[i].name);
+  }
+
+  var votes = [];
+  for (var j = 0; j < allProducts.length; j++) {
+    votes.push(allProducts[j].votes);
+  }
+
+  var colors = [];
+  for (var k = 0; k < allProducts.length; k++) {
+    colors.push(allProducts[k].bgColor);
+  }
+
+  var chartConfig = {
+    type: 'bar',
+    data: {
+      labels: names,
+      datasets: [{
+        label: '# of Votes',
+        data: votes,
+        backgroundColor: colors,
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  };
+
+  return new Chart(ctx, chartConfig);
 }
 //add event listeners to receive the value of the callback function 
 firstImg.addEventListener('click', handleImageClick);
